@@ -37,7 +37,7 @@ solution "recastnavigation"
 	-- windows specific
 	configuration "windows"
 		platforms { "Win32", "Win64" }
-		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0" }
+		defines { "WIN32", "_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_HAS_EXCEPTIONS=0", "LUA_BUILD_AS_DLL" }
 		-- warnings "Extra" uses /W4 which is too aggressive for us, so use W3 instead.
 		-- Disable:
 		-- * C4351: new behavior for array initialization
@@ -117,6 +117,35 @@ project "Recast"
 		"../Recast/Source/*.cpp" 
 	}
 
+project "Lua"
+	language "C"
+	kind "SharedLib"
+	includedirs { 
+	}
+	files { 
+		"../Lua/*.h",
+		"../Lua/*.c" 
+	}
+
+project "LuaBinding"
+	language "C++"
+	kind "StaticLib"
+	includedirs { 
+		"../LuaBinding/Include",
+		"../DebugUtils/Include",
+		"../Detour/Include",
+		"../DetourCrowd/Include",
+		"../DetourTileCache/Include",
+		"../Recast/Include",
+		"../RecastDemo/Include",
+		"../Lua"
+	}
+	files { 
+		"../LuaBinding/Include/*.h",
+		"../LuaBinding/Source/*.cpp",
+		"../LuaBinding/Source/*.c" 
+	}
+
 project "RecastDemo"
 	language "C++"
 	kind "WindowedApp"
@@ -128,7 +157,10 @@ project "RecastDemo"
 		"../Detour/Include",
 		"../DetourCrowd/Include",
 		"../DetourTileCache/Include",
-		"../Recast/Include"
+		"../Recast/Include",
+		"../LuaBinding/Include",
+		"Contrib/SDL/include",
+		"../Lua"
 	}
 	files	{ 
 		"../RecastDemo/Include/*.h",
@@ -143,7 +175,9 @@ project "RecastDemo"
 		"Detour",
 		"DetourCrowd",
 		"DetourTileCache",
-		"Recast"
+		"Recast",
+		"Lua",
+		"LuaBinding"
 	}
 
 	-- distribute executable in RecastDemo/Bin directory
@@ -174,7 +208,7 @@ project "RecastDemo"
 			"glu32",
 			"opengl32",
 			"SDL2",
-			"SDL2main",
+			"SDL2main"
 		}
 		postbuildcommands {
 			-- Copy the SDL2 dll to the Bin folder.

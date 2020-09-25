@@ -44,6 +44,8 @@
 #include "Sample_TempObstacles.h"
 #include "Sample_Debug.h"
 
+#include "lnav.h"
+
 #ifdef WIN32
 #	define snprintf _snprintf
 #	define putenv _putenv
@@ -69,8 +71,31 @@ static SampleItem g_samples[] =
 };
 static const int g_nsamples = sizeof(g_samples) / sizeof(SampleItem);
 
+static void
+_register(lua_State *L, lua_CFunction func, const char * libname) {
+	luaL_requiref(L, libname, func, 0);
+	lua_pop(L, 1);
+}
+
+static const char * startscript =
+"local detour = require \"detour\"\n"
+
+"print(detour)\n"
+"for k, v in pairs(detour) do\n"
+"print(k, v)\n"
+"end\n"
+;
+
+
 int main(int /*argc*/, char** /*argv*/)
 {
+	lua_State* pL = luaL_newstate();
+	luaL_openlibs(pL);
+	_register(pL, luaopen_detour, "detour");
+	printf(".....................\n");
+
+	int err = luaL_loadstring(pL, startscript);
+	err = lua_pcall(pL, 0, 0, 0);
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
