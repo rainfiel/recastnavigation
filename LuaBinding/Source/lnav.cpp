@@ -19,6 +19,13 @@ T* atget(lua_State*L, const char* ct) {
 }
 #define aget( L, C ) atget<C>( L, #C );
 
+
+template < typename T >
+void atdel(lua_State*L, const char* ct) {
+	delete (*reinterpret_cast<T**>(luaL_checkudata(L, 1, ct)));
+}
+#define adel(L, C) atdel<C>(L, #C);
+
 static inline void _paramErr(lua_State* L) {
 	const char* strParamErrNative = "native function param error.";
 	luaL_error( L, "%s\n", strParamErrNative );
@@ -32,6 +39,7 @@ int lass_navCreateContext(lua_State* L) {
 }
 
 int lass_navCloseContext(lua_State* L) {
+	adel(L, BuildContext);
 	return 0;
 }
 
@@ -81,10 +89,12 @@ int lass_navLoad(lua_State* L) {
 }
 
 int lass_navCloseNav(lua_State* L) {
+	adel(L, Nav);
 	return 0;
 }
 
 int lass_navCloseCrowd(lua_State* L) {
+	adel(L, Crowd);
 	return 0;
 }
 
