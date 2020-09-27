@@ -499,6 +499,7 @@ int lass_navIsWalkable(lua_State* L) {
 
 
 extern "C" int luaopen_detour(lua_State* L) {
+	luaL_checkversion(L);
 
 	luaL_Reg l[] = {
 		{ "navCreateContext", lass_navCreateContext },
