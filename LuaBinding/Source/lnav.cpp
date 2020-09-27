@@ -3,6 +3,7 @@
 #pragma warning( disable : 4800)
 
 #include "lnav.h"
+#include <math.h>
 
 template < typename T >
 int gc_del(lua_State*L) {
