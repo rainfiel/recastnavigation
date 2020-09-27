@@ -5,9 +5,44 @@
 #include "lnav.h"
 
 template < typename T >
+int gc_del(lua_State*L) {
+	delete (*reinterpret_cast<T**>(lua_touserdata(L, 1)));
+	return 0;
+}
+
+template <>
+int gc_del<BuildContext>(lua_State*L) {
+	delete (*reinterpret_cast<BuildContext**>(luaL_checkudata(L, 1, "BuildContext")));
+	return 0;
+}
+
+template <>
+int gc_del<Nav>(lua_State*L) {
+	delete (*reinterpret_cast<Nav**>(luaL_checkudata(L, 1, "Nav")));
+	return 0;
+}
+
+template <>
+int gc_del<Crowd>(lua_State*L) {
+	delete (*reinterpret_cast<Crowd**>(luaL_checkudata(L, 1, "Crowd")));
+	return 0;
+}
+
+template < typename T >
 T* atnew(lua_State*L, const char* ct) {
 	*reinterpret_cast<T**>(lua_newuserdata(L, sizeof(T*))) = new T;
-	luaL_setmetatable(L, ct);
+
+	if (luaL_newmetatable(L, ct)) {
+		static const luaL_Reg functions[] =
+		{
+			{ "__gc", gc_del<T> },
+			{ nullptr, nullptr }
+		};
+		luaL_setfuncs(L, functions, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
 
 	return (*reinterpret_cast<T**>(luaL_checkudata(L, -1, ct)));
 }
@@ -19,12 +54,12 @@ T* atget(lua_State*L, const char* ct) {
 }
 #define aget( L, C ) atget<C>( L, #C );
 
-
 template < typename T >
 void atdel(lua_State*L, const char* ct) {
 	delete (*reinterpret_cast<T**>(luaL_checkudata(L, 1, ct)));
 }
 #define adel(L, C) atdel<C>(L, #C);
+
 
 static inline void _paramErr(lua_State* L) {
 	const char* strParamErrNative = "native function param error.";

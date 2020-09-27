@@ -84,8 +84,31 @@ static const char * startscript =
 "for k, v in pairs(detour) do\n"
 "print(k, v)\n"
 "end\n"
+
+"local c = detour.navCreateContext(true)\n"
+"local n = detour.navCreateNav(c)\n"
+"--c = nil\n"
+"--n = nil\n"
+"--collectgarbage()\n"
+"detour.navCloseNav(n)\n"
 ;
 
+
+static int
+traceback(lua_State *L) {
+	const char *msg = lua_tostring(L, 1);
+	if (msg == NULL) {
+		if (luaL_callmeta(L, 1, "__tostring") &&
+			lua_type(L, -1) == LUA_TSTRING)
+			return 1;
+		else
+			msg = lua_pushfstring(L, "(error object is a %s value)",
+				luaL_typename(L, 1));
+	}
+	luaL_traceback(L, L, msg, 1);
+	printf("%s\n", msg);
+	return 1;
+}
 
 int main(int /*argc*/, char** /*argv*/)
 {
@@ -94,8 +117,11 @@ int main(int /*argc*/, char** /*argv*/)
 	_register(pL, luaopen_detour, "detour");
 	printf(".....................\n");
 
+	lua_pushcfunction(pL, traceback);
+	int tb = lua_gettop(pL);
+
 	int err = luaL_loadstring(pL, startscript);
-	err = lua_pcall(pL, 0, 0, 0);
+	err = lua_pcall(pL, 0, 0, tb);
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
