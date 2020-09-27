@@ -16,6 +16,7 @@ RecastDemo/Bin/Tests
 
 # Build directory
 RecastDemo/Build
+LuaBinding/Build
 
 # Ignore meshes
 RecastDemo/Bin/Meshes/*

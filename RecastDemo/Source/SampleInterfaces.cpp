@@ -2,13 +2,17 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string>
 #include "SampleInterfaces.h"
 #include "Recast.h"
 #include "RecastDebugDraw.h"
 #include "DetourDebugDraw.h"
 #include "PerfTimer.h"
-#include "SDL.h"
-#include "SDL_opengl.h"
+
+#ifndef LUA_BINDING
+	#include "SDL.h"
+	#include "SDL_opengl.h"
+#endif
 
 #ifdef WIN32
 #	define snprintf _snprintf
@@ -136,6 +140,7 @@ const char* BuildContext::getLogText(const int i) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef LUA_BINDING
 
 class GLCheckerTexture
 {
@@ -259,6 +264,7 @@ void DebugDrawGL::end()
 	glPointSize(1.0f);
 }
 
+#endif // !LUA_BINDING
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 FileIO::FileIO() :
