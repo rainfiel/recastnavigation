@@ -67,19 +67,19 @@ static inline void _paramErr(lua_State* L) {
 	luaL_error( L, "%s\n", strParamErrNative );
 }
 
-int lass_navCreateContext(lua_State* L) {
+static int lua_navCreateContext(lua_State* L) {
 	int flag = lua_toboolean(L, 1);
 	BuildContext* ctx = anew(L, BuildContext);
 	ctx->enableLog((bool)flag);
 	return 1;
 }
 
-int lass_navCloseContext(lua_State* L) {
+static int lua_navCloseContext(lua_State* L) {
 	adel(L, BuildContext);
 	return 0;
 }
 
-int lass_navCreateNav(lua_State* L) {
+static int lua_navCreateNav(lua_State* L) {
 	BuildContext* ctx = aget(L, BuildContext);
 	if (ctx == NULL) {
 		_paramErr(L);
@@ -90,7 +90,7 @@ int lass_navCreateNav(lua_State* L) {
 	return 1;
 }
 
-int lass_navCreateCrowd(lua_State* L) {
+static int lua_navCreateCrowd(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -101,7 +101,7 @@ int lass_navCreateCrowd(lua_State* L) {
 	return 1;
 }
 
-int lass_navLoad(lua_State* L) {
+static int lua_navLoad(lua_State* L) {
 	bool flag;
 
 	Nav* nav = aget(L, Nav);
@@ -124,17 +124,17 @@ int lass_navLoad(lua_State* L) {
 	return 1;
 }
 
-int lass_navCloseNav(lua_State* L) {
+static int lua_navCloseNav(lua_State* L) {
 	adel(L, Nav);
 	return 0;
 }
 
-int lass_navCloseCrowd(lua_State* L) {
+static int lua_navCloseCrowd(lua_State* L) {
 	adel(L, Crowd);
 	return 0;
 }
 
-int lass_navRandomPos(lua_State* L) {
+static int lua_navRandomPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -153,7 +153,7 @@ int lass_navRandomPos(lua_State* L) {
 	return 1;
 }
 
-int lass_navHeight(lua_State* L) {
+static int lua_navHeight(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -171,7 +171,7 @@ int lass_navHeight(lua_State* L) {
 	return 2;
 }
 
-int lass_navHeightByHit(lua_State* L) {
+static int lua_navHeightByHit(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -190,7 +190,7 @@ int lass_navHeightByHit(lua_State* L) {
 	return 2;
 }
 
-int lass_navHitPos(lua_State* L) {
+static int lua_navHitPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -216,7 +216,7 @@ int lass_navHitPos(lua_State* L) {
 	return 4;
 }
 
-int lass_navHit(lua_State* L) {
+static int lua_navHit(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -253,7 +253,7 @@ int lass_navHit(lua_State* L) {
 	return 1;
 }
 
-int lass_setSetting(lua_State* L) {
+static int lua_setSetting(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -269,7 +269,7 @@ int lass_setSetting(lua_State* L) {
 	return 0;
 }
 
-int lass_navPath(lua_State* L) {
+static int lua_navPath(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -305,7 +305,7 @@ int lass_navPath(lua_State* L) {
 	return 2;
 }
 
-int lass_navPathDistance(lua_State* L) {
+static int lua_navPathDistance(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -361,7 +361,7 @@ int lass_navPathDistance(lua_State* L) {
 	return 2;
 }
 
-int lass_navCrowdUpdate(lua_State* L) {
+static int lua_navCrowdUpdate(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
 		_paramErr(L);
@@ -372,7 +372,7 @@ int lass_navCrowdUpdate(lua_State* L) {
 	return 0;
 }
 
-int lass_navCrowdAddAgent(lua_State* L) {
+static int lua_navCrowdAddAgent(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
 		_paramErr(L);
@@ -388,7 +388,7 @@ int lass_navCrowdAddAgent(lua_State* L) {
 	return 1;
 }
 
-int lass_navCrowdDelAgent(lua_State* L) {
+static int lua_navCrowdDelAgent(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
 		_paramErr(L);
@@ -399,7 +399,7 @@ int lass_navCrowdDelAgent(lua_State* L) {
 	return 0;
 }
 
-int lass_navCrowdSetTarget(lua_State* L) {
+static int lua_navCrowdSetTarget(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
 		_paramErr(L);
@@ -421,7 +421,7 @@ int lass_navCrowdSetTarget(lua_State* L) {
 	return 4;
 }
 
-int lass_navCrowdGetPos(lua_State* L) {
+static int lua_navCrowdGetPos(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
 		_paramErr(L);
@@ -447,7 +447,7 @@ int lass_navCrowdGetPos(lua_State* L) {
 	return 1;
 }
 
-int lass_navGetNearestPos(lua_State* L) {
+static int lua_navGetNearestPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -476,7 +476,7 @@ int lass_navGetNearestPos(lua_State* L) {
 	return 2;
 }
 
-int lass_navIsWalkable(lua_State* L) {
+static int lua_navIsWalkable(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
 		_paramErr(L);
@@ -501,28 +501,28 @@ int lass_navIsWalkable(lua_State* L) {
 extern "C" int luaopen_detour(lua_State* L) {
 
 	luaL_Reg l[] = {
-		{ "navCreateContext", lass_navCreateContext },
-		{ "navCreateNav"	, lass_navCreateNav },
-		{ "navCreateCrowd"	, lass_navCreateCrowd },
-		{ "navCloseContext"	, lass_navCloseContext },
-		{ "navCloseNav"		, lass_navCloseNav },
-		{ "navCloseCrowd"	, lass_navCloseCrowd },
-		{ "navLoad"			, lass_navLoad },
-		{ "navRandomPos"	, lass_navRandomPos },
-		{ "navHeight"		, lass_navHeight },
-		{ "navHeightByHit"	, lass_navHeightByHit },
-		{ "navHitPos"		, lass_navHitPos },
-		{ "navHit"			, lass_navHit },
-		{ "navSetSetting"	, lass_setSetting },
-		{ "navPath"			, lass_navPath },
-		{ "navPathDistance"	, lass_navPathDistance },
-		{ "navCrowdUpdate"	, lass_navCrowdUpdate },
-		{ "navCrowdAddAgent", lass_navCrowdAddAgent },
-		{ "navCrowdDelAgent", lass_navCrowdDelAgent },
-		{ "navCrowdSetTarget", lass_navCrowdSetTarget },
-		{ "navCrowdGetPos"	, lass_navCrowdGetPos },
-		{ "navGetNearestPos", lass_navGetNearestPos },
-		{ "navIsWalkable"	, lass_navIsWalkable },
+		{ "navCreateContext", lua_navCreateContext },
+		{ "navCreateNav"	, lua_navCreateNav },
+		{ "navCreateCrowd"	, lua_navCreateCrowd },
+		{ "navCloseContext"	, lua_navCloseContext },
+		{ "navCloseNav"		, lua_navCloseNav },
+		{ "navCloseCrowd"	, lua_navCloseCrowd },
+		{ "navLoad"			, lua_navLoad },
+		{ "navRandomPos"	, lua_navRandomPos },
+		{ "navHeight"		, lua_navHeight },
+		{ "navHeightByHit"	, lua_navHeightByHit },
+		{ "navHitPos"		, lua_navHitPos },
+		{ "navHit"			, lua_navHit },
+		{ "navSetSetting"	, lua_setSetting },
+		{ "navPath"			, lua_navPath },
+		{ "navPathDistance"	, lua_navPathDistance },
+		{ "navCrowdUpdate"	, lua_navCrowdUpdate },
+		{ "navCrowdAddAgent", lua_navCrowdAddAgent },
+		{ "navCrowdDelAgent", lua_navCrowdDelAgent },
+		{ "navCrowdSetTarget", lua_navCrowdSetTarget },
+		{ "navCrowdGetPos"	, lua_navCrowdGetPos },
+		{ "navGetNearestPos", lua_navGetNearestPos },
+		{ "navIsWalkable"	, lua_navIsWalkable },
 
 		{ NULL, NULL },
 	};
