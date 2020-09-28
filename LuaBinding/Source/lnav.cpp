@@ -63,7 +63,7 @@ void atdel(lua_State*L, const char* ct) {
 
 
 static inline void _paramErr(lua_State* L) {
-	const char* strParamErrNative = "native function param error.";
+	const char* strParamErrNative = "native function param error";
 	luaL_error( L, "%s\n", strParamErrNative );
 }
 
@@ -112,12 +112,12 @@ int lass_navLoad(lua_State* L) {
 	const char* path = luaL_checkstring(L, 2);
 	flag = nav->load(path);
 	if (!flag) {
-		_paramErr(L);
+		luaL_error( L, "load nav file failed\n");
 		return 0;
 	}
 	flag = nav->handleBuild();
 	if (!flag) {
-		_paramErr(L);
+		luaL_error( L, "handle build failed\n");
 		return 0;
 	}
 	lua_pushnumber(L, nav->getTotalBuildTimeMs());
