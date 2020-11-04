@@ -792,8 +792,10 @@ bool Nav::findSmoothPath(const float* spos,const float* epos,float* path,int* np
 				npolys = fixupShortcuts(polys, npolys, m_navQuery);
 
 				float h = 0;
-				m_navQuery->getPolyHeight(polys[0], result, &h);
-				result[1] = h;
+				dtStatus status = m_navQuery->getPolyHeight(polys[0], result, &h);
+				if (dtStatusSucceed(status)) {
+					result[1] = h;
+				}
 				dtVcopy(iterPos, result);
 
 				// Handle end of path and off-mesh links when close enough.
