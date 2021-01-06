@@ -840,11 +840,11 @@ bool Nav::findSmoothPath(const float* spos,const float* epos,float* path,int* np
 							dtVcopy(&path[m_nsmoothPath*3], startPos);
 							m_nsmoothPath++;
 							// Hack to make the dotted path not visible during off-mesh connection.
-							if (m_nsmoothPath & 1)
+							/*if (m_nsmoothPath & 1)
 							{
 								dtVcopy(&path[m_nsmoothPath*3], startPos);
 								m_nsmoothPath++;
-							}
+							}*/
 						}
 						// Move position at the other side of the off-mesh link.
 						dtVcopy(iterPos, endPos);
