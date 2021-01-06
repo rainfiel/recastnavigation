@@ -97,7 +97,7 @@ class InputGeom
 	///@}
 	
 	bool loadMesh(class rcContext* ctx, const std::string& filepath);
-	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);
+	bool loadGeomSet(class rcContext* ctx, const std::string& filepath, std::string& workdir);
 public:
 	InputGeom();
 	~InputGeom();
@@ -110,8 +110,8 @@ public:
 	const rcMeshLoaderObj* getMesh() const { return m_mesh; }
 	const float* getMeshBoundsMin() const { return m_meshBMin; }
 	const float* getMeshBoundsMax() const { return m_meshBMax; }
-	const float* getNavMeshBoundsMin() const { return m_hasBuildSettings ? m_buildSettings.navMeshBMin : m_meshBMin; }
-	const float* getNavMeshBoundsMax() const { return m_hasBuildSettings ? m_buildSettings.navMeshBMax : m_meshBMax; }
+	const float* getNavMeshBoundsMin() const { return (m_hasBuildSettings && m_buildSettings.navMeshBMin[0] > 0) ? m_buildSettings.navMeshBMin : m_meshBMin; }
+	const float* getNavMeshBoundsMax() const { return (m_hasBuildSettings && m_buildSettings.navMeshBMax[0] > 0) ? m_buildSettings.navMeshBMax : m_meshBMax; }
 	const rcChunkyTriMesh* getChunkyMesh() const { return m_chunkyMesh; }
 	const BuildSettings* getBuildSettings() const { return m_hasBuildSettings ? &m_buildSettings : 0; }
 	bool raycastMesh(float* src, float* dst, float& tmin);

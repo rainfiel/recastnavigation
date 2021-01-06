@@ -163,7 +163,7 @@ bool InputGeom::loadMesh(rcContext* ctx, const std::string& filepath)
 	return true;
 }
 
-bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
+bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath, std::string& workdir)
 {
 	char* buf = 0;
 	FILE* fp = fopen(filepath.c_str(), "rb");
@@ -224,7 +224,8 @@ bool InputGeom::loadGeomSet(rcContext* ctx, const std::string& filepath)
 				name++;
 			if (*name)
 			{
-				if (!loadMesh(ctx, name))
+				workdir += name;
+				if (!loadMesh(ctx, workdir))
 				{
 					delete [] buf;
 					return false;
@@ -306,8 +307,14 @@ bool InputGeom::load(rcContext* ctx, const std::string& filepath)
 	std::string extension = filepath.substr(extensionPos);
 	std::transform(extension.begin(), extension.end(), extension.begin(), tolower);
 
+	size_t pos = filepath.find_last_of('/');
+	std::string workDir = "";
+	if (pos != std::string::npos) {
+		workDir = filepath.substr(0, pos + 1);
+	}
+
 	if (extension == ".gset")
-		return loadGeomSet(ctx, filepath);
+		return loadGeomSet(ctx, filepath, workDir);
 	if (extension == ".obj")
 		return loadMesh(ctx, filepath);
 

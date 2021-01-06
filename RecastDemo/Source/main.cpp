@@ -45,6 +45,7 @@
 #include "Sample_Debug.h"
 
 #include "lnav.h"
+#include "Nav.h"
 
 #ifdef WIN32
 #	define snprintf _snprintf
@@ -110,18 +111,92 @@ traceback(lua_State *L) {
 	return 1;
 }
 
-int main(int /*argc*/, char** /*argv*/)
+static lua_State* pL = NULL;
+void setupLua()
 {
-	lua_State* pL = luaL_newstate();
+	pL = luaL_newstate();
 	luaL_openlibs(pL);
 	_register(pL, luaopen_detour, "detour");
-	printf(".....................\n");
+	printf("lua detour loaded\n");
+}
+
+bool loadLua()
+{
+	const string filepath = "Meshes/main.lua";
+	char* buf = 0;
+	FILE* fp = fopen(filepath.c_str(), "rt");
+	if (!fp)
+	{
+		return false;
+	}
+	if (fseek(fp, 0, SEEK_END) != 0)
+	{
+		fclose(fp);
+		return false;
+	}
+
+	long bufSize = ftell(fp);
+	if (bufSize < 0)
+	{
+		fclose(fp);
+		return false;
+	}
+	if (fseek(fp, 0, SEEK_SET) != 0)
+	{
+		fclose(fp);
+		return false;
+	}
+	buf = new char[bufSize];
+	if (!buf)
+	{
+		fclose(fp);
+		return false;
+	}
+	size_t readLen = fread(buf, sizeof(char), bufSize, fp);
+	fclose(fp);
+	if (readLen <= 0)
+	{
+		printf("%s\n", buf);
+		printf("read file failed:%d %d\n", bufSize, (int)readLen);
+		delete[] buf;
+		return false;
+	}
 
 	lua_pushcfunction(pL, traceback);
 	int tb = lua_gettop(pL);
 
-	int err = luaL_loadstring(pL, startscript);
+	int err = luaL_loadbuffer(pL, buf, readLen, "detour");
+	if (err) {
+		delete[] buf;
+		const char *msg = lua_tostring(pL, -1);
+		printf("load failed: %s\n", msg);
+		return false;
+	}
+
 	err = lua_pcall(pL, 0, 0, tb);
+	if (err) {
+		delete[] buf;
+		const char *msg = lua_tostring(pL, -1);
+		printf("call failed: %s\n", msg);
+		return false;
+	}
+
+	delete[] buf;
+
+	return true;
+}
+
+Nav* getLuaNav()
+{
+	lua_getfield(pL, LUA_REGISTRYINDEX, "ud_nav");
+	Nav* nav = (*reinterpret_cast<Nav**>(luaL_checkudata(pL, -1, "Nav")));
+	return nav;
+}
+
+int main(int /*argc*/, char** /*argv*/)
+{
+	setupLua();
+
 	// Init SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -299,6 +374,11 @@ int main(int /*argc*/, char** /*argv*/)
 
 							geom->saveGeomSet(&settings);
 						}
+					}
+					else if (event.key.keysym.sym == SDLK_l)
+					{
+			//			loadLua();
+						
 					}
 					break;
 				
@@ -597,7 +677,44 @@ int main(int /*argc*/, char** /*argv*/)
 					showTestCases = false;
 				}
 			}
-			
+
+			imguiSeparator();
+			if (sample) {
+				if (imguiButton("LoadLua")) {
+					if (loadLua())
+					{
+						Nav* nav = getLuaNav();
+						if (nav) {
+							geom = nav->getGeom();
+							sample->handleMeshChanged(geom);
+
+							const float* bmin = 0;
+							const float* bmax = 0;
+							if (geom)
+							{
+								bmin = geom->getNavMeshBoundsMin();
+								bmax = geom->getNavMeshBoundsMax();
+							}
+							// Reset camera and fog to match the mesh bounds.
+							if (bmin && bmax)
+							{
+								camr = sqrtf(rcSqr(bmax[0] - bmin[0]) +
+									rcSqr(bmax[1] - bmin[1]) +
+									rcSqr(bmax[2] - bmin[2])) / 2;
+								cameraPos[0] = (bmax[0] + bmin[0]) / 2 + camr;
+								cameraPos[1] = (bmax[1] + bmin[1]) / 2 + camr;
+								cameraPos[2] = (bmax[2] + bmin[2]) / 2 + camr;
+								camr *= 3;
+							}
+							cameraEulers[0] = 45;
+							cameraEulers[1] = -45;
+							glFogf(GL_FOG_START, camr * 0.1f);
+							glFogf(GL_FOG_END, camr * 1.25f);
+						}
+					}
+				}
+			}
+
 			imguiSeparator();
 			imguiLabel("Input Mesh");
 			if (imguiButton(meshName.c_str()))
@@ -715,7 +832,7 @@ int main(int /*argc*/, char** /*argv*/)
 			
 			imguiEndScrollArea();
 		}
-		
+
 		// Level selection dialog.
 		if (showLevels)
 		{

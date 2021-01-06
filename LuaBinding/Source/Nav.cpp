@@ -242,8 +242,8 @@ void Nav::resetCommonSettings()
 	m_cellSize = 0.3f;
 	m_cellHeight = 0.2f;
 	m_agentHeight = 2.0f;
-	m_agentRadius = 0.5f;
-	m_agentMaxClimb = 0.5f;
+	m_agentRadius = 0.6f;
+	m_agentMaxClimb = 0.6f;
 	m_agentMaxSlope = 45.0f;
 	m_regionMinSize = 2;
 	m_regionMergeSize = 20;
@@ -284,7 +284,7 @@ bool Nav::handleBuild()
 	}
 	m_ctx->log(RC_LOG_PROGRESS, "Sample_SoloMesh::handleBuild start:");
 	cleanup();
-	
+
 	const float* bmin = m_geom->getNavMeshBoundsMin();
 	const float* bmax = m_geom->getNavMeshBoundsMax();
 	const float* verts = m_geom->getMesh()->getVerts();

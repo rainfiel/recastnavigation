@@ -89,6 +89,7 @@ public:
 	void setSetting(float cellSize,float cellHeight,float agentHeight,float agentRadius,float agentMaxClimb,float agentMaxSlope);
 	class dtNavMesh* getNavMesh() { return m_navMesh; }
 	class dtNavMeshQuery* getNavMeshQuery() { return m_navQuery; }
+	class InputGeom* getGeom() { return m_geom; }
 	float getAgentRadius() { return m_agentRadius; }
 	float getAgentHeight() { return m_agentHeight; }
 	float getAgentClimb() { return m_agentMaxClimb; }
