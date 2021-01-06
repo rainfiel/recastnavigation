@@ -292,7 +292,9 @@ int lass_navPath(lua_State* L) {
 
 	float path[MAX_SMOOTH * 3];
 	int npath = 0;
-	bool flag = nav->findPath(pathFindType, spos, epos, path, &npath);
+	int offmesh[MAX_SMOOTH];
+	int noffmesh = 0;
+	bool flag = nav->findPath(pathFindType, spos, epos, path, &npath, offmesh, &noffmesh);
 	lua_pushboolean(L, flag);
 	lua_newtable(L);
 	lua_pushnumber(L, -1);
@@ -302,8 +304,35 @@ int lass_navPath(lua_State* L) {
 		lua_pushnumber(L, i % 3 == 0 ? -path[i] : path[i]);
 		lua_rawseti(L, -2, i + 1);
 	}
-	return 2;
+
+	lua_newtable(L);
+	for (int i = 0; i < noffmesh; i++) {
+		lua_pushnumber(L, offmesh[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+	return 3;
 }
+
+int lass_navGetOffmeshLink(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		_paramErr(L);
+		return 0;
+	}
+	InputGeom* geom = nav->getGeom();
+	int count = geom->getOffMeshConnectionCount();
+	if (count <= 0) return 0;
+
+	const float* verts = geom->getOffMeshConnectionVerts();
+	count *= 6;
+	lua_newtable(L);
+	for (int i = 0; i < count; i++) {
+		lua_pushnumber(L, i % 3 == 0 ? -verts[i] : verts[i]);
+		lua_rawseti(L, -2, i+1);
+	}
+	return 1;
+}
+
 
 int lass_navPathDistance(lua_State* L) {
 	Nav* nav = aget(L, Nav);
@@ -330,7 +359,9 @@ int lass_navPathDistance(lua_State* L) {
 
 	float path[MAX_SMOOTH * 3];
 	int npath = 0;
-	bool flag = nav->findPath(pathFindType, spos, epos, path, &npath);
+	int offmesh[MAX_SMOOTH];
+	int noffmesh = 0;
+	bool flag = nav->findPath(pathFindType, spos, epos, path, &npath, offmesh, &noffmesh);
 	lua_pushboolean(L, flag);
 	float dist = 0;
 	if (flag) {
@@ -524,6 +555,7 @@ extern "C" int luaopen_detour(lua_State* L) {
 		{ "navCrowdGetPos"	, lass_navCrowdGetPos },
 		{ "navGetNearestPos", lass_navGetNearestPos },
 		{ "navIsWalkable"	, lass_navIsWalkable },
+		{ "navGetOffmeshLink",lass_navGetOffmeshLink },
 
 		{ NULL, NULL },
 	};

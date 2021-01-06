@@ -95,7 +95,7 @@ public:
 	float getAgentClimb() { return m_agentMaxClimb; }
 	float getTotalBuildTimeMs(){return m_totalBuildTimeMs;}
 	dtStatus findNearestPoly(const float* pos,dtPolyRef* ref,float* nearestPos);
-	bool findSmoothPath(const float* spos,const float* epos,float* path,int* npath);
+	bool findSmoothPath(const float* spos,const float* epos,float* path,int* npath,int* offmesh,int* noffmesh);
 	bool findStraightPath(const float* spos,const float* epos,float* path,int* npath);
 	bool load(const std::string& filepath);
 	bool handleBuild();
@@ -104,7 +104,7 @@ public:
 	bool getHitPos(const float* spos,const float* epos,float* pos);
 	bool findRandomPos(float* pos);
 	//bool findPath(const float* spos,float* path,int* npath);
-	bool findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath);
+	bool findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath,int* offmesh,int* noffmesh);
 	bool getNearestPos(const float* pos, float* nearestPos);
 	bool isWalkable(const float* pos,const float maxDist, float* h,float* dist);
 	float getClock();

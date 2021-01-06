@@ -682,9 +682,9 @@ bool Nav::getHitPos(const float* spos,const float* epos,float* pos){
 	return findPath(1,spos,epos,path,npath);
 }*/
 
-bool Nav::findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath){
+bool Nav::findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath,int* offmesh, int* noffmesh){
 	if(pathFindType == 1){
-		return findSmoothPath(spos,epos,path,npath);
+		return findSmoothPath(spos,epos,path,npath,offmesh,noffmesh);
 	}
 	else if(pathFindType == 2)
 	{
@@ -721,9 +721,10 @@ bool Nav::findStraightPath(const float* spos,const float* epos,float* path,int* 
 	return false;
 }
 
-bool Nav::findSmoothPath(const float* spos,const float* epos,float* path,int* npath)
+bool Nav::findSmoothPath(const float* spos,const float* epos,float* path,int* npath, int* offmesh, int* noffmesh)
 {
 	int m_npolys=0;
+	*noffmesh = 0;
 	dtPolyRef m_polys[MAX_POLYS];
 	dtPolyRef m_startRef,m_endRef;
 	
@@ -834,6 +835,8 @@ bool Nav::findSmoothPath(const float* spos,const float* epos,float* path,int* np
 					{
 						if (m_nsmoothPath < MAX_SMOOTH)
 						{
+							offmesh[*noffmesh] = m_nsmoothPath;
+							(*noffmesh)++;
 							dtVcopy(&path[m_nsmoothPath*3], startPos);
 							m_nsmoothPath++;
 							// Hack to make the dotted path not visible during off-mesh connection.

@@ -122,7 +122,7 @@ void setupLua()
 
 bool loadLua()
 {
-	const string filepath = "Meshes/main.lua";
+	const string filepath = "../../LuaBinding/main.lua";
 	char* buf = 0;
 	FILE* fp = fopen(filepath.c_str(), "rt");
 	if (!fp)
@@ -236,7 +236,7 @@ int main(int /*argc*/, char** /*argv*/)
 	{
 		float aspect = 16.0f / 9.0f;
 		width = rcMin(displayMode.w, (int)(displayMode.h * aspect)) - 80;
-		height = displayMode.h - 80;
+		height = displayMode.h - 180;
 	}
 	
 	SDL_Window* window;
