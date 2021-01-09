@@ -693,7 +693,13 @@ void NavMeshTesterTool::recalc()
 		m_endRef = 0;
 	
 	m_pathFindStatus = DT_FAILURE;
-	
+	if (m_sample) {
+		dtQueryFilter* filter = m_sample->getFilter();
+		if (filter) {
+			m_filter.setExcludeFlags(filter->getExcludeFlags());
+		}
+	}
+
 	if (m_toolMode == TOOLMODE_PATHFIND_FOLLOW)
 	{
 		m_pathIterNum = 0;

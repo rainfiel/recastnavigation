@@ -49,3 +49,4 @@ Docs/html
 ## IDE files
 .idea/
 cmake-build-*/
+*.bin

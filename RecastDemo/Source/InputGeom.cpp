@@ -337,7 +337,13 @@ bool InputGeom::saveGeomSet(const BuildSettings* settings)
 	if (!fp) return false;
 	
 	// Store mesh filename.
-	fprintf(fp, "f %s\n", m_mesh->getFileName().c_str());
+	filepath = m_mesh->getFileName();
+	size_t pos = filepath.find_last_of('/');
+	std::string filename = "";
+	if (pos != std::string::npos) {
+		filename = filepath.substr(pos+1);
+	}
+	fprintf(fp, "f %s\n", filename.c_str());
 
 	// Store settings if any
 	if (settings)

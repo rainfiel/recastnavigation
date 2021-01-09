@@ -66,7 +66,8 @@ Sample::Sample() :
 	m_filterLedgeSpans(true),
 	m_filterWalkableLowHeightSpans(true),
 	m_tool(0),
-	m_ctx(0)
+	m_ctx(0),
+	m_filter(NULL)
 {
 	resetCommonSettings();
 	m_navQuery = dtAllocNavMeshQuery();

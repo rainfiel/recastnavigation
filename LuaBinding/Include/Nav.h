@@ -90,6 +90,7 @@ public:
 	class dtNavMesh* getNavMesh() { return m_navMesh; }
 	class dtNavMeshQuery* getNavMeshQuery() { return m_navQuery; }
 	class InputGeom* getGeom() { return m_geom; }
+	class dtQueryFilter* getFilter() { return &m_filter; }
 	float getAgentRadius() { return m_agentRadius; }
 	float getAgentHeight() { return m_agentHeight; }
 	float getAgentClimb() { return m_agentMaxClimb; }

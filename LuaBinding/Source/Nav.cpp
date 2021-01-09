@@ -202,6 +202,18 @@ Nav::Nav():
 
 	m_filter.setIncludeFlags(SAMPLE_POLYFLAGS_ALL ^ SAMPLE_POLYFLAGS_DISABLED);
 	m_filter.setExcludeFlags(0);
+
+	if (m_navQuery)
+	{
+		// Change costs.
+		m_filter.setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);
+		m_filter.setAreaCost(SAMPLE_POLYAREA_WATER, 10.0f);
+		m_filter.setAreaCost(SAMPLE_POLYAREA_ROAD, 1.0f);
+		m_filter.setAreaCost(SAMPLE_POLYAREA_DOOR, 1.0f);
+		m_filter.setAreaCost(SAMPLE_POLYAREA_GRASS, 2.0f);
+		m_filter.setAreaCost(SAMPLE_POLYAREA_JUMP, 1.5f);
+	}
+
 	m_polyPickExt[0] = 2;
 	m_polyPickExt[1] = 4;
 	m_polyPickExt[2] = 2;
@@ -527,6 +539,12 @@ bool Nav::handleBuild()
 			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_DOOR)
 			{
 				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+			}
+			else 
+			{
+				unsigned char area = m_pmesh->areas[i];
+				m_pmesh->areas[i] = SAMPLE_POLYFLAGS_DOOR;
+				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | area;
 			}
 		}
 

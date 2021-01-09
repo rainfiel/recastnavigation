@@ -674,6 +674,12 @@ bool Sample_SoloMesh::handleBuild()
 			{
 				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 			}
+			else
+			{
+				unsigned char area = m_pmesh->areas[i];
+				m_pmesh->areas[i] = SAMPLE_POLYFLAGS_DOOR;
+				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | area;
+			}
 		}
 
 

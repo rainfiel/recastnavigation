@@ -687,7 +687,8 @@ int main(int /*argc*/, char** /*argv*/)
 						if (nav) {
 							geom = nav->getGeom();
 							sample->handleMeshChanged(geom);
-
+							sample->setFilter(nav->getFilter());
+							
 							const float* bmin = 0;
 							const float* bmax = 0;
 							if (geom)

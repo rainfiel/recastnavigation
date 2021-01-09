@@ -67,6 +67,7 @@ static inline void _paramErr(lua_State* L) {
 	luaL_error( L, "%s\n", strParamErrNative );
 }
 
+static
 int lass_navCreateContext(lua_State* L) {
 	int flag = lua_toboolean(L, 1);
 	BuildContext* ctx = anew(L, BuildContext);
@@ -74,40 +75,41 @@ int lass_navCreateContext(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_navCloseContext(lua_State* L) {
 	adel(L, BuildContext);
 	return 0;
 }
 
+static
 int lass_navCreateNav(lua_State* L) {
 	BuildContext* ctx = aget(L, BuildContext);
 	if (ctx == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need BuildContext");
 	}
 	Nav* nav = anew(L, Nav);
 	nav->setContext(ctx);
 	return 1;
 }
 
+static
 int lass_navCreateCrowd(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	Crowd* crowd = anew(L, Crowd);
 	crowd->init(nav);
 	return 1;
 }
 
+static
 int lass_navLoad(lua_State* L) {
 	bool flag;
 
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	const char* path = luaL_checkstring(L, 2);
 	flag = nav->load(path);
@@ -124,21 +126,23 @@ int lass_navLoad(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_navCloseNav(lua_State* L) {
 	adel(L, Nav);
 	return 0;
 }
 
+static
 int lass_navCloseCrowd(lua_State* L) {
 	adel(L, Crowd);
 	return 0;
 }
 
+static
 int lass_navRandomPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float pos[3];
 	nav->findRandomPos(pos);
@@ -153,11 +157,11 @@ int lass_navRandomPos(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_navHeight(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float spos[3];
 	spos[0] = (float)luaL_checknumber(L, 2);
@@ -171,11 +175,11 @@ int lass_navHeight(lua_State* L) {
 	return 2;
 }
 
+static
 int lass_navHeightByHit(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float spos[3];
 	spos[0] = (float)luaL_checknumber(L, 2);
@@ -190,11 +194,11 @@ int lass_navHeightByHit(lua_State* L) {
 	return 2;
 }
 
+static
 int lass_navHitPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float spos[3];
 	spos[0] = (float)luaL_checknumber(L, 2);
@@ -216,11 +220,11 @@ int lass_navHitPos(lua_State* L) {
 	return 4;
 }
 
+static
 int lass_navHit(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float spos[3];
 	spos[0] = (float)luaL_checknumber(L, 2);
@@ -253,11 +257,11 @@ int lass_navHit(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_setSetting(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float cellSize = (float)luaL_checknumber(L, 2);
 	float cellHeight = (float)luaL_checknumber(L, 3);
@@ -269,11 +273,11 @@ int lass_setSetting(lua_State* L) {
 	return 0;
 }
 
+static
 int lass_navPath(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	unsigned int pathFindType = (unsigned int)luaL_checknumber(L, 2);
 	float spos[3];
@@ -313,11 +317,11 @@ int lass_navPath(lua_State* L) {
 	return 3;
 }
 
+static
 int lass_navGetOffmeshLink(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	InputGeom* geom = nav->getGeom();
 	int count = geom->getOffMeshConnectionCount();
@@ -333,12 +337,11 @@ int lass_navGetOffmeshLink(lua_State* L) {
 	return 1;
 }
 
-
+static
 int lass_navPathDistance(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	unsigned int pathFindType = (unsigned int)luaL_checknumber(L, 2);
 	float spos[3];
@@ -392,22 +395,22 @@ int lass_navPathDistance(lua_State* L) {
 	return 2;
 }
 
+static
 int lass_navCrowdUpdate(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Crowd");
 	}
 	float dt = (float)luaL_checknumber(L, 2);
 	crowd->updateTick(dt);
 	return 0;
 }
 
+static
 int lass_navCrowdAddAgent(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Crowd");
 	}
 	float spos[3];
 	spos[0] = (float)luaL_checknumber(L, 2);
@@ -419,22 +422,22 @@ int lass_navCrowdAddAgent(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_navCrowdDelAgent(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Crowd");
 	}
 	int idx = luaL_checkinteger(L, 2);
 	crowd->removeAgent(idx);
 	return 0;
 }
 
+static
 int lass_navCrowdSetTarget(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Crowd");
 	}
 	int idx = luaL_checkinteger(L, 2);
 	float spos[3];
@@ -452,11 +455,11 @@ int lass_navCrowdSetTarget(lua_State* L) {
 	return 4;
 }
 
+static
 int lass_navCrowdGetPos(lua_State* L) {
 	Crowd* crowd = aget(L, Crowd);
 	if (crowd == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Crowd");
 	}
 	int idx = luaL_checkinteger(L, 2);
 	float pos[3] = { 0,0,0 };
@@ -478,11 +481,11 @@ int lass_navCrowdGetPos(lua_State* L) {
 	return 1;
 }
 
+static
 int lass_navGetNearestPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float pos[3];
 	pos[0] = (float)luaL_checknumber(L, 2);
@@ -507,11 +510,11 @@ int lass_navGetNearestPos(lua_State* L) {
 	return 2;
 }
 
+static
 int lass_navIsWalkable(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
-		_paramErr(L);
-		return 0;
+		return luaL_error(L, "need Nav");
 	}
 	float maxDist = (float)luaL_checknumber(L, 2);
 	float pos[3];
@@ -528,6 +531,78 @@ int lass_navIsWalkable(lua_State* L) {
 	return 3;
 }
 
+static
+int lass_navSetExcludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	unsigned short flags = (unsigned short)luaL_checknumber(L, 2);
+	dtQueryFilter* filter = nav->getFilter();
+	filter->setExcludeFlags(flags);
+	return 0;
+}
+
+static
+int lass_navGetExcludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	dtQueryFilter* filter = nav->getFilter();
+	lua_pushnumber(L, filter->getExcludeFlags());
+	return 1;
+}
+
+static
+int lass_navSetIncludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	unsigned short flags = (unsigned short)luaL_checknumber(L, 2);
+	dtQueryFilter* filter = nav->getFilter();
+	filter->setIncludeFlags(flags);
+	return 0;
+}
+
+static
+int lass_navGetIncludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	dtQueryFilter* filter = nav->getFilter();
+	lua_pushnumber(L, filter->getIncludeFlags());
+	return 1;
+}
+
+static
+int lass_navSetNavCost(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+
+	int area = (int)luaL_checknumber(L, 2);
+	float cost = luaL_checknumber(L, 3);
+	dtQueryFilter* filter = nav->getFilter();
+	filter->setAreaCost(area, cost);
+	return 0;
+}
+
+static
+int lass_navGetNavCost(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+
+	int area = (int)luaL_checknumber(L, 2);
+	dtQueryFilter* filter = nav->getFilter();
+	lua_pushnumber(L, filter->getAreaCost(area));
+	return 1;
+}
 
 extern "C" int luaopen_detour(lua_State* L) {
 	luaL_checkversion(L);
@@ -556,6 +631,12 @@ extern "C" int luaopen_detour(lua_State* L) {
 		{ "navGetNearestPos", lass_navGetNearestPos },
 		{ "navIsWalkable"	, lass_navIsWalkable },
 		{ "navGetOffmeshLink",lass_navGetOffmeshLink },
+		{ "navSetExcludeFilter", lass_navSetExcludeFilter },
+		{ "navGetExcludeFilter", lass_navGetExcludeFilter },
+		{ "navSetIncludeFilter", lass_navSetIncludeFilter },
+		{ "navGetIncludeFilter", lass_navGetIncludeFilter },
+		{ "navSetNavCost", lass_navSetNavCost },
+		{ "navGetNavCost", lass_navGetNavCost },
 
 		{ NULL, NULL },
 	};

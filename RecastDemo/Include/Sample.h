@@ -103,6 +103,7 @@ protected:
 	class dtNavMesh* m_navMesh;
 	class dtNavMeshQuery* m_navQuery;
 	class dtCrowd* m_crowd;
+	class dtQueryFilter* m_filter;
 
 	unsigned char m_navMeshDrawFlags;
 
@@ -140,6 +141,8 @@ public:
 	virtual ~Sample();
 	
 	void setContext(BuildContext* ctx) { m_ctx = ctx; }
+	void setFilter(dtQueryFilter* filter) { m_filter = filter; }
+	dtQueryFilter* getFilter() { return m_filter; }
 	
 	void setTool(SampleTool* tool);
 	SampleToolState* getToolState(int type) { return m_toolStates[type]; }
