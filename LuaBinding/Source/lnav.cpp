@@ -4,6 +4,7 @@
 
 #include "lnav.h"
 #include <math.h>
+#include "Sample.h"
 
 template < typename T >
 int gc_del(lua_State*L) {
@@ -578,6 +579,58 @@ int lass_navGetIncludeFilter(lua_State* L) {
 }
 
 static
+int lass_navSetDoorExcludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	unsigned char area = (unsigned char)luaL_checknumber(L, 2);
+	if (area < SAMPLE_POLYAREA_DOOR)
+		return luaL_error(L, "invalid area:%d", area);
+
+	unsigned short idx = (area - SAMPLE_POLYAREA_DOOR) >> 4;
+
+	unsigned short flags = (unsigned short)luaL_checknumber(L, 3);
+	dtQueryFilter* filter = nav->getFilter();
+	filter->setDoorExcludeFlags(idx, flags);
+	return 0;
+}
+
+static
+int lass_navGetDoorExcludeFilter(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+	unsigned char area = (unsigned char)luaL_checknumber(L, 2);
+	if (area < SAMPLE_POLYAREA_DOOR)
+		return luaL_error(L, "invalid area:%d", area);
+
+	unsigned short idx = (area - SAMPLE_POLYAREA_DOOR) >> 4;
+	unsigned short flag = pow(2, (area - SAMPLE_POLYAREA_DOOR) & 0xf);
+	dtQueryFilter* filter = nav->getFilter();
+
+	lua_pushnumber(L, flag);
+	lua_pushnumber(L, filter->getDoorExcludeFlags(idx));
+	return 2;
+}
+
+static
+int lass_setAllDoors(lua_State *L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "arg need Nav object");
+	}
+
+	unsigned short flags = (unsigned short)luaL_checknumber(L, 2);
+	dtQueryFilter* filter = nav->getFilter();
+	for (int i = 0; i < DT_MAX_DOOR_GROUP; ++i) {
+		filter->setDoorExcludeFlags(i, flags);
+	}
+	return 0;
+}
+
+static
 int lass_navSetNavCost(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
@@ -633,10 +686,13 @@ extern "C" int luaopen_detour(lua_State* L) {
 		{ "navGetOffmeshLink",lass_navGetOffmeshLink },
 		{ "navSetExcludeFilter", lass_navSetExcludeFilter },
 		{ "navGetExcludeFilter", lass_navGetExcludeFilter },
+		{ "navSetDoorExcludeFilter", lass_navSetDoorExcludeFilter },
+		{ "navGetDoorExcludeFilter", lass_navGetDoorExcludeFilter },
 		{ "navSetIncludeFilter", lass_navSetIncludeFilter },
 		{ "navGetIncludeFilter", lass_navGetIncludeFilter },
 		{ "navSetNavCost", lass_navSetNavCost },
 		{ "navGetNavCost", lass_navGetNavCost },
+		{ "navSetAllDoorExclude", lass_setAllDoors },
 
 		{ NULL, NULL },
 	};

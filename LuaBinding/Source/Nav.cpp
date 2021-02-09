@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include "Nav.h"
 #include "DetourNavMeshQuery.h"
@@ -536,15 +537,15 @@ bool Nav::handleBuild()
 			{
 				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_SWIM;
 			}
-			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_DOOR)
+			else if (m_pmesh->areas[i] >= SAMPLE_POLYAREA_DOOR)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
-			}
-			else 
-			{
+				//define 5~63 areas as doors
+				//each 0xf doors has one query flag
+				//4 flags total
 				unsigned char area = m_pmesh->areas[i];
-				m_pmesh->areas[i] = SAMPLE_POLYFLAGS_DOOR;
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | area;
+				m_pmesh->areas[i] = area;
+				unsigned short flag = pow(2, (area - SAMPLE_POLYAREA_DOOR) & 0xf);
+				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | flag;
 			}
 		}
 

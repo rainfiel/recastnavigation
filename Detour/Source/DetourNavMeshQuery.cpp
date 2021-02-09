@@ -66,6 +66,8 @@ dtQueryFilter::dtQueryFilter() :
 {
 	for (int i = 0; i < DT_MAX_AREAS; ++i)
 		m_areaCost[i] = 1.0f;
+	for (int i = 0; i < DT_MAX_DOOR_GROUP; ++i)
+		m_door_excludeFlags[i] = 0;
 }
 
 #ifdef DT_VIRTUAL_QUERYFILTER
@@ -88,7 +90,17 @@ inline bool dtQueryFilter::passFilter(const dtPolyRef /*ref*/,
 									  const dtMeshTile* /*tile*/,
 									  const dtPoly* poly) const
 {
-	return (poly->flags & m_includeFlags) != 0 && (poly->flags & m_excludeFlags) == 0;
+	unsigned char area = poly->getArea();
+	if (area < 5)
+		return (poly->flags & m_includeFlags) != 0 && (poly->flags & m_excludeFlags) == 0;
+	else
+	{
+		unsigned short group = (area - 5) >> 4;
+		if (group >= 0 && group < DT_MAX_DOOR_GROUP)
+			return (poly->flags & m_door_excludeFlags[group]) == 0;
+		else
+			return false;
+	}
 }
 
 inline float dtQueryFilter::getCost(const float* pa, const float* pb,
@@ -101,8 +113,6 @@ inline float dtQueryFilter::getCost(const float* pa, const float* pb,
 #endif	
 	
 static const float H_SCALE = 0.999f; // Search heuristic scale.
-
-
 dtNavMeshQuery* dtAllocNavMeshQuery()
 {
 	void* mem = dtAlloc(sizeof(dtNavMeshQuery), DT_ALLOC_PERM);

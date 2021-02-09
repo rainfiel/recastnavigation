@@ -38,6 +38,7 @@ class dtQueryFilter
 	unsigned short m_includeFlags;		///< Flags for polygons that can be visited. (Used by default implementation.)
 	unsigned short m_excludeFlags;		///< Flags for polygons that should not be visted. (Used by default implementation.)
 	
+	unsigned short m_door_excludeFlags[DT_MAX_DOOR_GROUP];
 public:
 	dtQueryFilter();
 	
@@ -110,6 +111,9 @@ public:
 	/// Any polygons that include one ore more of these flags will be
 	/// excluded from the operation.
 	inline unsigned short getExcludeFlags() const { return m_excludeFlags; }
+
+	inline unsigned short getDoorExcludeFlags(const unsigned short idx) { return m_door_excludeFlags[idx];}
+	inline void setDoorExcludeFlags(const unsigned char idx, const unsigned short flags) { m_door_excludeFlags[idx] = flags; }
 
 	/// Sets the exclude flags for the filter.
 	/// @param[in]		flags		The new flags.
