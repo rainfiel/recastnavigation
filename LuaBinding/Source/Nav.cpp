@@ -545,7 +545,8 @@ bool Nav::handleBuild()
 				unsigned char area = m_pmesh->areas[i];
 				m_pmesh->areas[i] = area;
 				unsigned short flag = pow(2, (area - SAMPLE_POLYAREA_DOOR) & 0xf);
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | flag;
+			//	m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | flag;
+				m_pmesh->flags[i] = flag;
 			}
 		}
 
