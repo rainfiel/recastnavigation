@@ -103,6 +103,7 @@ public:
 	bool getHeight(const float* pos,float* h);
 	bool getHeightByHit(const float* pos,const float diff,float* h);
 	bool getHitPos(const float* spos,const float* epos,float* pos);
+	bool raycast(const float* spos, const float* epos, float* hitPos);
 	bool findRandomPos(float* pos);
 	//bool findPath(const float* spos,float* path,int* npath);
 	bool findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath,int* offmesh,int* noffmesh);

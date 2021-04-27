@@ -702,6 +702,27 @@ bool Nav::getHitPos(const float* spos,const float* epos,float* pos){
 	return findPath(1,spos,epos,path,npath);
 }*/
 
+bool Nav::raycast(const float* spos, const float* epos, float* hitPos)
+{
+	dtPolyRef startRef;
+	m_navQuery->findNearestPoly(spos, m_polyPickExt, &m_filter, &startRef, 0);
+	if (!startRef)
+		return true;
+
+	float t = 0;
+	float hitNormal[3];
+	int m_npolys=0;
+	dtPolyRef polys[MAX_POLYS];
+	m_navQuery->raycast(startRef, spos, epos, &m_filter, &t, hitNormal, polys, &m_npolys, MAX_POLYS);
+	if (t > 1) {
+		dtVcopy(hitPos, epos);
+		return false;
+	} else {
+		dtVlerp(hitPos, spos, epos, t);
+		return true;
+	}
+}
+
 bool Nav::findPath(unsigned int pathFindType,const float* spos,const float* epos,float* path,int* npath,int* offmesh, int* noffmesh){
 	if(pathFindType == 1){
 		return findSmoothPath(spos,epos,path,npath,offmesh,noffmesh);

@@ -196,6 +196,33 @@ int lass_navHeightByHit(lua_State* L) {
 }
 
 static
+int lass_raycast(lua_State* L) {
+	Nav* nav = aget(L, Nav);
+	if (nav == NULL) {
+		return luaL_error(L, "need Nav");
+	}
+	float spos[3];
+	spos[0] = (float)luaL_checknumber(L, 2);
+	spos[1] = (float)luaL_checknumber(L, 3);
+	spos[2] = (float)luaL_checknumber(L, 4);
+	spos[0] = -spos[0];
+	float epos[3];
+	epos[0] = (float)luaL_checknumber(L, 5);
+	epos[1] = (float)luaL_checknumber(L, 6);
+	epos[2] = (float)luaL_checknumber(L, 7);
+	epos[0] = -epos[0];
+
+	float pos[3];
+	bool flag = nav->raycast(spos, epos, pos);
+
+	lua_pushboolean(L, flag);
+	lua_pushnumber(L, -pos[0]);
+	lua_pushnumber(L, pos[1]);
+	lua_pushnumber(L, pos[2]);
+	return 4;
+}
+
+static
 int lass_navHitPos(lua_State* L) {
 	Nav* nav = aget(L, Nav);
 	if (nav == NULL) {
@@ -693,6 +720,8 @@ extern "C" int luaopen_detour(lua_State* L) {
 		{ "navSetNavCost", lass_navSetNavCost },
 		{ "navGetNavCost", lass_navGetNavCost },
 		{ "navSetAllDoorExclude", lass_setAllDoors },
+		{ "navRaycast", lass_raycast },
+
 
 		{ NULL, NULL },
 	};
